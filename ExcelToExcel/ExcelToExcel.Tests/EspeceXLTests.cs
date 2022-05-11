@@ -99,11 +99,69 @@ namespace ExcelToExcel.Tests
             Assert.Throws<ArgumentException>(act);
         }
 
-        // TODO : Q05 : Créez le test « SaveCSV_BadFileName_Should_Fail »
+        // xTODO : Q05 : Créez le test « SaveCSV_BadFileName_Should_Fail »
 
-        // TODO : Q06 : Créez le test « SaveJson_BadFileName_Should_Fail »
+        [Theory]
+        [MemberData(nameof(WrongCSVOutputFileNames))]
+        public void SaveCSV_BadFileName_Should_Fail(string output)
+        {
+            /// Arrange
+            /// 
+            string fn = "liste_especes.xlsx";
+            var filename = Path.Combine(excelFilesPath, fn);
+            var especeXL = new EspeceXL(filename);
+            especeXL.LoadFile();
 
-        // TODO : Q07 : Créez le test « SaveXls_BadFileName_Should_Fail »
+            especeXL.GetCSV();
+
+            Action act = () => especeXL.SaveCSV(output);
+
+            /// Assert
+            /// 
+            Assert.Throws<ArgumentException>(act);
+        }
+        [Theory]
+        [MemberData(nameof(WrongJsonOutputFileNames))]
+        public void SaveJson_BadFileName_Should_Fail(string output)
+        {
+            /// Arrange
+            /// 
+            string fn = "liste_especes.xlsx";
+            var filename = Path.Combine(excelFilesPath, fn);
+            var especeXL = new EspeceXL(filename);
+            especeXL.LoadFile();
+
+            especeXL.GetCSV();
+
+            Action act = () => especeXL.SaveJson(output);
+
+            /// Assert
+            /// 
+            Assert.Throws<ArgumentException>(act);
+        }
+        // xTODO : Q06 : Créez le test « SaveJson_BadFileName_Should_Fail »
+
+        // xTODO : Q07 : Créez le test « SaveXls_BadFileName_Should_Fail »
+
+        [Theory]
+        [MemberData(nameof(WrongJsonOutputFileNames))]
+        public void SaveXlsx_BadFileName_Should_Fail(string output)
+        {
+            /// Arrange
+            /// 
+            string fn = "liste_especes.xlsx";
+            var filename = Path.Combine(excelFilesPath, fn);
+            var especeXL = new EspeceXL(filename);
+            especeXL.LoadFile();
+
+            especeXL.GetCSV();
+
+            Action act = () => especeXL.SaveXls(output);
+
+            /// Assert
+            /// 
+            Assert.Throws<ArgumentException>(act);
+        }
 
         public static IEnumerable<object[]> BadExcelFilesTestData = new List<object[]>
         {
@@ -117,6 +175,28 @@ namespace ExcelToExcel.Tests
         {
             new object[] {"liste_especes.xlsx"},
             new object[] {"liste_especes_multifeuilles.xlsx"},
+        };
+        public static IEnumerable<object[]> WrongCSVOutputFileNames = new List<object[]>
+        {
+            new object[] {"!841!.csv"},
+            new object[] {"!%#!&*!.csv"},
+            new object[] {")(*&^!.csv"},
+            new object[] {"loooolollol.txt"},
+        };
+        public static IEnumerable<object[]> WrongxlsxOutputFileNames = new List<object[]>
+        {
+            new object[] {"!841!.xlsx"},
+            new object[] {"!%#!&*!.xlsx"},
+            new object[] {")(*&^!.xlsx"},
+            new object[] {"loooolollol.txt"},
+        };
+
+        public static IEnumerable<object[]> WrongJsonOutputFileNames = new List<object[]>
+        {
+            new object[] {"!841!.json"},
+            new object[] {"!%#!&*!.json"},
+            new object[] {")(*&^!.json"},
+            new object[] {"loooolollol.txt"},
         };
     }
 }

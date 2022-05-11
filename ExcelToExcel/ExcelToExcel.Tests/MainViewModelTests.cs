@@ -38,20 +38,67 @@ namespace ExcelToExcel.Tests
         /// <summary>
         /// Le fichier d'entrée est vide. La propriété Message devrait être vide.
         /// </summary>
+        [Fact]
         public void InputFile_IsEmpty_Message_ShouldBe_Empty()
         {
-            /// TODO : Q01a. Compléter le test
-            /// TODO : Q01b. Ne pas briser la batterie de tests après ce tests
-            /// 
-            Assert.True(false);
+            /// xTODO : Q01a. Compléter le test
+            /// xTODO : Q01b. Ne pas briser la batterie de tests après ce tests
+            vm.LoadContentCommand.CanExecute("");
+
+            var actual = vm.Message;
+            var expected = "";
+
+            Assert.Equal(expected, actual);
         }
 
-        // TODO : Q02 : Créer le test CanExecuteSaveCommand_FileNotLoaded_ShouldReturn_False
+        // xTODO : Q02 : Créer le test CanExecuteSaveCommand_FileNotLoaded_ShouldReturn_False
+        [Theory]
+        [MemberData(nameof(ExcelFilesTestData))]
+        public void CanExecuteSaveCommand_FileNotLoaded_ShouldReturn_False(string fn)
+        {
+            var filename = Path.Combine(excelFilesPath, fn);
+            vm.InputFilename = filename;
 
-        // TODO : Q03 : Créer le test CanExecuteSaveCommand_OutputFileInvalid_ShouldReturn_False
+            /// Act
+            var actual = vm.SaveCommand.CanExecute("");
 
-        // TODO : Q04 : Créer le test CanExecuteSaveCommand_OutputFileValid_ShouldReturn_True(string filename)
+            /// Assert
+            Assert.False(actual);
+        }
 
+        // xTODO : Q03 : Créer le test CanExecuteSaveCommand_OutputFileInvalid_ShouldReturn_False
+        [Theory]
+        [MemberData(nameof(WrongOutputFileNames))]
+        public void CanExecuteSaveCommand_OutputFileInvalid_ShouldReturn_False(string output)
+        {
+            var filename = Path.Combine(excelFilesPath, "liste_especes.xlsx");
+            vm.InputFilename = filename;
+            /// Act
+            vm.LoadContentCommand.Execute(null);
+            vm.OutputFilename = output;
+
+            var actual = vm.SaveCommand.CanExecute("");
+
+            /// Assert
+            Assert.False(actual);
+        }
+
+        // xTODO : Q04 : Créer le test CanExecuteSaveCommand_OutputFileValid_ShouldReturn_True(string filename)
+        [Theory]
+        [MemberData(nameof(GoodOutputFileNames))]
+        public void CanExecuteSaveCommand_OutputFileValid_ShouldReturn_True(string output)
+        {
+            var filename = Path.Combine(excelFilesPath, "liste_especes.xlsx");
+            vm.InputFilename = filename;
+            /// Act
+            vm.LoadContentCommand.Execute(null);
+            vm.OutputFilename = output;
+
+            var actual = vm.SaveCommand.CanExecute("");
+
+            /// Assert
+            Assert.False(actual);
+        }
 
         #endregion
 
@@ -209,6 +256,21 @@ namespace ExcelToExcel.Tests
             new object[] {"test.txt"},
             new object[] {"fasfdsfa.xlsx"},
             new object[] {"loooolollol.xlsx"},
+        };
+
+        public static IEnumerable<object[]> WrongOutputFileNames = new List<object[]>
+        {
+            new object[] {"!841!.xlsx"},
+            new object[] {"!%#!&*!.txt"},
+            new object[] {")(*&^!.csv"},
+            new object[] {"loooolollol.txt"},
+        };
+        public static IEnumerable<object[]> GoodOutputFileNames = new List<object[]>
+        {
+            new object[] {"a.xlsx"},
+            new object[] {"lol.txt"},
+            new object[] {"yeet.csv"},
+            new object[] {"oyeee.txt"},
         };
 
         public static IEnumerable<object[]> BadFileTypesTestData = new List<object[]>

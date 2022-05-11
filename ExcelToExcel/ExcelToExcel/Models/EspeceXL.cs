@@ -1,9 +1,11 @@
 ﻿using ClosedXML.Excel;
+using ExcelToExcel.ViewModels;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace ExcelToExcel.Models
 {
@@ -131,34 +133,49 @@ namespace ExcelToExcel.Models
         /// <param name="filename"></param>
         public void SaveCSV(string filename)
         {
-            /// TODO : Q05 : Ajouter les validations pour passer les tests
+            /// xTODO : Q05 : Ajouter les validations pour passer les tests
             /// 
-
-            var output = GetCSV();
-
-            using (var writer = new StreamWriter(filename, false, System.Text.Encoding.UTF8))
+            if (filename[^3..] == "csv" && !VerifySpecialCharsInString(filename))
             {
-                writer.Write(output);
+                var output = GetCSV();
+
+                using (var writer = new StreamWriter(filename, false, System.Text.Encoding.UTF8))
+                {
+                    writer.Write(output);
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Mauvais format de fichier!");
             }
         }
 
         public void SaveJson(string filename)
         {
-            /// TODO : Q06 Ajouter les validations pour passer les tests
+            /// xTODO : Q06 Ajouter les validations pour passer les tests
             /// 
-            var lst = GetAsList();
-
-            string output = JsonConvert.SerializeObject(lst, Formatting.Indented);
-
-            using (var writer = new StreamWriter(filename))
+            if (filename[^4..] == "json" && !VerifySpecialCharsInString(filename))
             {
-                writer.Write(output);
+                var lst = GetAsList();
+
+                string output = JsonConvert.SerializeObject(lst, Formatting.Indented);
+
+                using (var writer = new StreamWriter(filename))
+                {
+                    writer.Write(output);
+                }
             }
+            else
+            {
+                throw new ArgumentException("Mauvais format de fichier!");
+
+            }
+
         }
 
         public void SaveToFile(string filename, bool overwrite = false)
         {
-            /// TODO : Q08 Ajouter les validations pour passer les tests
+            /// xTODO : Q08 Ajouter les validations pour passer les tests
             
             var ext = Path.GetExtension(filename).ToLower();
 
@@ -174,16 +191,38 @@ namespace ExcelToExcel.Models
                     SaveXls(filename);
                     break;
                 default:
-                    /// TODO : Q09 Lancer l'exception ArgumentException avec le message "Type inconnu" et le nom du paramètre filename
+                    /// xTODO : Q09 Lancer l'exception ArgumentException avec le message "Type inconnu" et le nom du paramètre filename
                     /// 
+                    throw new ArgumentException("Format inconnu!");
                     break;
             }
         }
 
-        private void SaveXls(string filename)
+        public void SaveXls(string filename)
         {
-            /// TODO : Q07 Ajouter les validations pour passer les tests
-            wb.SaveAs(filename);
+            /// xTODO : Q07 Ajouter les validations pour passer les tests
+            if (filename[^4..] == "xlsx" && !VerifySpecialCharsInString(filename))
+            {
+                wb.SaveAs(filename);
+            }
+            else
+            {
+                throw new ArgumentException("Mauvais format de fichier!");
+            }
+
+        }
+
+        private bool VerifySpecialCharsInString(string s)
+        {
+            Regex r = new Regex("[a-z][A-Z][.$/][0-9]");
+            if (r.IsMatch(s))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }

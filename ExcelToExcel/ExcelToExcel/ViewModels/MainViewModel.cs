@@ -3,6 +3,7 @@ using ExcelToExcel.Commands;
 using ExcelToExcel.Models;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace ExcelToExcel.ViewModels
 {
@@ -34,6 +35,7 @@ namespace ExcelToExcel.ViewModels
             set { 
                 outputFilename = value;
                 OnPropertyChanged();
+                CanExecuteSaveCommand(outputFilename);
             }
         }
 
@@ -87,7 +89,7 @@ namespace ExcelToExcel.ViewModels
 
             var fileExists = File.Exists(InputFilename);
 
-            if (!fileExists)
+            if (!fileExists && InputFilename != null && InputFilename != "")
             {
                 Message = "Fichier inexistant!";
                 result = false;
@@ -132,18 +134,36 @@ namespace ExcelToExcel.ViewModels
         /// <returns></returns>
         private bool CanExecuteSaveCommand(string obj)
         {
-            /// TODO : S'assurer que les tests de la commande fonctionne
+            /// xTODO : S'assurer que les tests de la commande fonctionne
             /// 
-
-            return !string.IsNullOrEmpty(InputFilename);
+            if (FileContent is null || VerifySpecialCharsInString(OutputFilename) || OutputFilename[^4..] != "xlsx" || OutputFilename[^3..] != "csv" || OutputFilename[^4..] != "json")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private void Save(string obj)
         {
-            /// TODO : S'assurer que les tests de la commande fonctionne
-            /// 
 
-            especes.SaveToFile(OutputFilename);
+                especes.SaveToFile(OutputFilename);
+
+        }
+
+        private bool VerifySpecialCharsInString(string s)
+        {
+            Regex r = new Regex("[a-z][A-Z][.$/][0-9]");
+            if (r.IsMatch(s))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
