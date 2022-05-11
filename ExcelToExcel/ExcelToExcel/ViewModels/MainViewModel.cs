@@ -136,13 +136,13 @@ namespace ExcelToExcel.ViewModels
         {
             /// xTODO : S'assurer que les tests de la commande fonctionne
             /// 
-            if (FileContent is null || VerifySpecialCharsInString(OutputFilename) || OutputFilename[^4..] != "xlsx" || OutputFilename[^3..] != "csv" || OutputFilename[^4..] != "json")
+            if (!(FileContent is null) && !VerifySpecialCharsInString(OutputFilename))
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
